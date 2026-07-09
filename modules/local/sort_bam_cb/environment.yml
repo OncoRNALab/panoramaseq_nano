@@ -1,0 +1,6 @@
+name: sort_bam_cb
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::samtools=1.21

@@ -1,0 +1,5 @@
+# Restrander runs exclusively from the Docker/Singularity container.
+name: restrander
+channels:
+  - conda-forge
+dependencies: []

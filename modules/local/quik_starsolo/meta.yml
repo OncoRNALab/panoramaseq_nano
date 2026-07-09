@@ -1,0 +1,85 @@
+name: quik_starsolo
+description: GPU-accelerated barcode calling using QUIK for STARsolo workflow
+keywords:
+  - barcode
+  - gpu
+  - quik
+  - starsolo
+  - cuda
+tools:
+  - quik:
+      description: |
+        GPU-accelerated barcode calling tool. Requires an NVIDIA CUDA-capable GPU
+        and must be run with Singularity or Apptainer (-profile singularity /
+        -profile apptainer). The container is a native Singularity .sif image
+        stored as an OCI artifact via the ORAS protocol and is not compatible
+        with Docker.
+      homepage: https://github.com/francoaps/quik
+      documentation: https://github.com/francoaps/quik
+      licence: ["MIT"]
+      identifier: oras://quay.io/francoaps/quik-runtime-compile
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. [ id:'test', single_end:false ]
+    - reads:
+        type: file
+        description: Paired-end FASTQ files (R1 and R2)
+        pattern: "*.fastq.gz"
+  - barcode_file:
+      - barcode_file:
+          type: file
+          description: CSV file containing barcode sequences and coordinates
+          pattern: "*.csv"
+output:
+  - r1:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - "*_R1_filtered.fastq.gz":
+          type: file
+          description: Filtered R1 reads with corrected barcodes
+          pattern: "*_R1_filtered.fastq.gz"
+  - r2:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - "*_R2_filtered.fastq.gz":
+          type: file
+          description: Filtered R2 reads
+          pattern: "*_R2_filtered.fastq.gz"
+  - whitelist:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - "*_whitelist.txt":
+          type: file
+          description: Whitelist of detected valid barcodes
+          pattern: "*_whitelist.txt"
+  - stats:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - "*_barcode_calling_stats.txt":
+          type: file
+          description: Barcode calling statistics
+          pattern: "*_barcode_calling_stats.txt"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+authors:
+  - "@francoaps"
+maintainers:
+  - "@francoaps"

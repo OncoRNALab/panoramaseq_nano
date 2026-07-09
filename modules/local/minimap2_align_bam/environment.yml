@@ -1,0 +1,7 @@
+name: minimap2_align_bam
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::minimap2=2.28
+  - bioconda::samtools=1.21

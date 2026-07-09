@@ -1,0 +1,8 @@
+name: extract_barcode
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - parasail-python=1.3.4
+  - editdistance=0.8.1

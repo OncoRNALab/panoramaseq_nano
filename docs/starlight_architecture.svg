@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1680" width="1280" height="1680">
+  <defs>
+    <style>
+      .title { font: 700 26px 'Segoe UI', system-ui, sans-serif; fill: #1a1a2e; }
+      .subtitle { font: 400 14px 'Segoe UI', system-ui, sans-serif; fill: #555; }
+      .section-label { font: 700 13px 'Segoe UI', system-ui, sans-serif; fill: #333; letter-spacing: 0.04em; }
+      .box-title { font: 600 12px 'Segoe UI', system-ui, sans-serif; fill: #111; }
+      .box-sub { font: 400 10px 'Segoe UI', system-ui, sans-serif; fill: #444; }
+      .note { font: 400 11px 'Segoe UI', system-ui, sans-serif; fill: #666; }
+      .branch-tag { font: 700 11px 'Segoe UI', system-ui, sans-serif; fill: #fff; }
+      .legend { font: 400 11px 'Segoe UI', system-ui, sans-serif; fill: #444; }
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#666"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#7c3aed"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="1680" fill="#fafbfc"/>
+
+  <!-- header -->
+  <text x="640" y="42" text-anchor="middle" class="title">nf-core/starlight  Pipeline Architecture</text>
+  <text x="640" y="64" text-anchor="middle" class="subtitle">ONT spatial / single-cell long-read cDNA � entry: workflows/starlight.nf � one quant branch per run</text>
+
+  <!-- INPUT -->
+  <rect x="40" y="88" width="1200" height="56" rx="8" fill="#eef2f7" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="110" class="section-label">INPUT</text>
+  <rect x="160" y="100" width="220" height="32" rx="6" fill="#fff" stroke="#94a3b8" filter="url(#shadow)"/>
+  <text x="270" y="120" text-anchor="middle" class="box-title">samplesheet.csv</text>
+  <text x="420" y="120" class="box-sub">single-end ONT FASTQ (.fastq.gz)</text>
+
+  <!-- SHARED PREPROCESSING -->
+  <rect x="40" y="168" width="1200" height="248" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="60" y="192" class="section-label" fill="#1d4ed8">SHARED PREPROCESSING (all modes)</text>
+
+  <!-- prep boxes row 1 -->
+  <g id="prep-row1">
+    <rect x="70" y="210" width="118" height="44" rx="6" fill="#fff" stroke="#60a5fa" filter="url(#shadow)"/>
+    <text x="129" y="228" text-anchor="middle" class="box-title">FASTQC</text>
+    <text x="129" y="242" text-anchor="middle" class="box-sub">raw reads QC</text>
+
+    <rect x="210" y="210" width="118" height="44" rx="6" fill="#fff" stroke="#60a5fa" stroke-dasharray="4 3" filter="url(#shadow)"/>
+    <text x="269" y="228" text-anchor="middle" class="box-title">SEQTK_SAMPLE</text>
+    <text x="269" y="242" text-anchor="middle" class="box-sub">optional � --n_reads</text>
+
+    <rect x="350" y="210" width="118" height="44" rx="6" fill="#fff" stroke="#60a5fa" stroke-dasharray="4 3" filter="url(#shadow)"/>
+    <text x="409" y="228" text-anchor="middle" class="box-title">CHOPPER</text>
+    <text x="409" y="242" text-anchor="middle" class="box-sub">optional trim</text>
+
+    <rect x="490" y="210" width="130" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+    <text x="555" y="228" text-anchor="middle" class="box-title">RESTRANDER</text>
+    <text x="555" y="242" text-anchor="middle" class="box-sub">mandatory orient</text>
+
+    <rect x="642" y="210" width="150" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+    <text x="717" y="228" text-anchor="middle" class="box-title">EXTRACT_BARCODE</text>
+    <text x="717" y="242" text-anchor="middle" class="box-sub">bc_tags.tsv.gz</text>
+
+    <rect x="814" y="210" width="118" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+    <text x="873" y="228" text-anchor="middle" class="box-title">SPLIT_READS</text>
+    <text x="873" y="242" text-anchor="middle" class="box-sub">R1 + R2</text>
+
+    <rect x="954" y="210" width="130" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+    <text x="1019" y="228" text-anchor="middle" class="box-title">QUIK_STARSOLO</text>
+    <text x="1019" y="242" text-anchor="middle" class="box-sub">GPU BC correct</text>
+
+    <rect x="1106" y="210" width="118" height="44" rx="6" fill="#dbeafe" stroke="#2563eb" filter="url(#shadow)"/>
+    <text x="1165" y="228" text-anchor="middle" class="box-title">R2 cDNA</text>
+    <text x="1165" y="242" text-anchor="middle" class="box-sub">+ bc_tags</text>
+  </g>
+
+  <!-- prep arrows row 1 -->
+  <line x1="188" y1="232" x2="208" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="328" y1="232" x2="348" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="468" y1="232" x2="488" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="620" y1="232" x2="640" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="792" y1="232" x2="812" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="932" y1="232" x2="952" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="1084" y1="232" x2="1104" y2="232" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- genome path (epi2me + isoquant only) -->
+  <text x="70" y="282" class="box-sub" fill="#1d4ed8">Genome path (epi2me &amp; isoquant only):</text>
+  <rect x="70" y="292" width="130" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+  <text x="135" y="310" text-anchor="middle" class="box-title">MINIMAP2_INDEX</text>
+  <text x="135" y="324" text-anchor="middle" class="box-sub">genome .mmi</text>
+
+  <rect x="220" y="292" width="130" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+  <text x="285" y="310" text-anchor="middle" class="box-title">MINIMAP2_ALIGN</text>
+  <text x="285" y="324" text-anchor="middle" class="box-sub">R2 � genome BAM</text>
+
+  <rect x="370" y="292" width="118" height="44" rx="6" fill="#fff" stroke="#2563eb" filter="url(#shadow)"/>
+  <text x="429" y="310" text-anchor="middle" class="box-title">TAG_BAM</text>
+  <text x="429" y="324" text-anchor="middle" class="box-sub">CB / UB tags</text>
+
+  <line x1="200" y1="314" x2="218" y2="314" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <line x1="350" y1="314" x2="368" y2="314" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- fork from QUIK -->
+  <path d="M 1165 254 L 1165 276 L 285 276 L 285 290" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <text x="720" y="270" text-anchor="middle" class="note">R2 FASTQ feeds genome align (epi2me / isoquant)</text>
+
+  <!-- branch selector -->
+  <rect x="40" y="440" width="1200" height="36" rx="6" fill="#334155"/>
+  <text x="640" y="463" text-anchor="middle" class="branch-tag">--gene_quant_mode  �  exactly ONE branch runs per execution</text>
+
+  <!-- THREE BRANCHES -->
+  <!-- EPI2ME -->
+  <rect x="40" y="496" width="390" height="560" rx="10" fill="#ecfdf5" stroke="#34d399" stroke-width="2"/>
+  <rect x="40" y="496" width="390" height="32" rx="10" fill="#059669"/>
+  <rect x="40" y="516" width="390" height="12" fill="#059669"/>
+  <text x="235" y="518" text-anchor="middle" class="branch-tag">epi2me � QUANTIFICATION_EPI2ME</text>
+  <text x="60" y="548" class="box-sub">Requires: stringtie_enabled=true, genome FASTA + GTF</text>
+
+  <rect x="70" y="562" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="584" text-anchor="middle" class="box-title">FILTER_PRIMARY_BAM  (-F 0x904)</text>
+
+  <rect x="70" y="610" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="632" text-anchor="middle" class="box-title">STRINGTIE � per-sample transcriptome GTF</text>
+
+  <rect x="70" y="658" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="680" text-anchor="middle" class="box-title">GFFREAD � transcriptome FASTA</text>
+
+  <rect x="70" y="706" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="728" text-anchor="middle" class="box-title">MINIMAP2 txome align (R2 FASTQ, map-ont)</text>
+
+  <rect x="70" y="754" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="776" text-anchor="middle" class="box-title">GFFCOMPARE (StringTie vs reference GTF)</text>
+
+  <rect x="70" y="802" width="330" height="36" rx="6" fill="#fff" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="235" y="824" text-anchor="middle" class="box-title">EXTRACT_BAM_TAGS + ASSIGN_FEATURES</text>
+
+  <rect x="70" y="850" width="330" height="44" rx="6" fill="#d1fae5" stroke="#059669" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="235" y="868" text-anchor="middle" class="box-title">CREATE_MATRIX</text>
+  <text x="235" y="882" text-anchor="middle" class="box-sub">10x MEX � gene + transcript � integer UMIs</text>
+
+  <text x="235" y="920" text-anchor="middle" class="note">Output: {outdir}/epi2me/</text>
+  <text x="235" y="938" text-anchor="middle" class="note">create_matrix � stringtie � gffcompare</text>
+
+  <!-- ISOQUANT -->
+  <rect x="445" y="496" width="390" height="560" rx="10" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+  <rect x="445" y="496" width="390" height="32" rx="10" fill="#d97706"/>
+  <rect x="445" y="516" width="390" height="12" fill="#d97706"/>
+  <text x="640" y="518" text-anchor="middle" class="branch-tag">isoquant � QUANTIFICATION_ISOQUANT</text>
+  <text x="465" y="548" class="box-sub">Requires: genome FASTA + GTF � IsoQuant 3.13</text>
+
+  <rect x="475" y="562" width="330" height="44" rx="6" fill="#fff" stroke="#f59e0b" stroke-dasharray="4 3" filter="url(#shadow)"/>
+  <text x="640" y="580" text-anchor="middle" class="box-title">FILTER_PRIMARY_BAM</text>
+  <text x="640" y="594" text-anchor="middle" class="box-sub">optional � --isoquant_use_primary (default true)</text>
+
+  <rect x="475" y="618" width="330" height="44" rx="6" fill="#fff" stroke="#f59e0b" filter="url(#shadow)"/>
+  <text x="640" y="636" text-anchor="middle" class="box-title">UMITOOLS_DEDUP</text>
+  <text x="640" y="650" text-anchor="middle" class="box-sub">--per-cell � directional � CB/UB</text>
+
+  <rect x="475" y="674" width="330" height="36" rx="6" fill="#fff" stroke="#f59e0b" filter="url(#shadow)"/>
+  <text x="640" y="696" text-anchor="middle" class="box-title">SAMTOOLS_INDEX + SAMTOOLS_FAIDX</text>
+
+  <rect x="475" y="722" width="330" height="56" rx="6" fill="#fff" stroke="#f59e0b" filter="url(#shadow)"/>
+  <text x="640" y="742" text-anchor="middle" class="box-title">ISOQUANT 3.13</text>
+  <text x="640" y="756" text-anchor="middle" class="box-sub">genome BAM � --barcoded_bam � --read_group tag:CB</text>
+  <text x="640" y="768" text-anchor="middle" class="box-sub">sensitive_ont � unique_only (tx) � counts_format mtx</text>
+
+  <rect x="475" y="792" width="330" height="56" rx="6" fill="#ffedd5" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="640" y="812" text-anchor="middle" class="box-title">Grouped MTX outputs</text>
+  <text x="640" y="826" text-anchor="middle" class="box-sub">gene + transcript � per-barcode matrices</text>
+  <text x="640" y="838" text-anchor="middle" class="box-sub">+ discovery GTFs � read assignments</text>
+
+  <text x="640" y="880" text-anchor="middle" class="note">Output: {outdir}/isoquant/</text>
+  <text x="640" y="898" text-anchor="middle" class="note">filter_primary_bam � umitools_dedup � isoquant tables</text>
+
+  <!-- OARFISH -->
+  <rect x="850" y="496" width="390" height="560" rx="10" fill="#f5f3ff" stroke="#a78bfa" stroke-width="2"/>
+  <rect x="850" y="496" width="390" height="32" rx="10" fill="#7c3aed"/>
+  <rect x="850" y="516" width="390" height="12" fill="#7c3aed"/>
+  <text x="1045" y="518" text-anchor="middle" class="branch-tag">oarfish � QUANTIFICATION_OARFISH</text>
+  <text x="870" y="548" class="box-sub">scnanoseq-style � no genome alignment � requires GTF + FASTA</text>
+
+  <rect x="880" y="562" width="330" height="44" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="580" text-anchor="middle" class="box-title">GFFREAD + MINIMAP2_INDEX txome</text>
+  <text x="1045" y="594" text-anchor="middle" class="box-sub">reference transcriptome from GTF</text>
+
+  <rect x="880" y="618" width="330" height="44" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="636" text-anchor="middle" class="box-title">MINIMAP2_ALIGN_TXOME</text>
+  <text x="1045" y="650" text-anchor="middle" class="box-sub">R2 FASTQ � map-ont � -N 100</text>
+
+  <rect x="880" y="674" width="330" height="36" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="696" text-anchor="middle" class="box-title">SAMTOOLS_FILTER_MAPPED  (-F 4)</text>
+
+  <rect x="880" y="722" width="330" height="36" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="744" text-anchor="middle" class="box-title">TAG_BAM  (CB / UB)</text>
+
+  <rect x="880" y="770" width="330" height="36" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="792" text-anchor="middle" class="box-title">UMITOOLS_DEDUP � SORT_BAM_CB</text>
+
+  <rect x="880" y="818" width="330" height="44" rx="6" fill="#fff" stroke="#8b5cf6" filter="url(#shadow)"/>
+  <text x="1045" y="836" text-anchor="middle" class="box-title">OARFISH 0.9.4</text>
+  <text x="1045" y="850" text-anchor="middle" class="box-sub">--single-cell � --filter-group no-filters</text>
+
+  <rect x="880" y="874" width="330" height="44" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1045" y="892" text-anchor="middle" class="box-title">OARFISH_AGGREGATE</text>
+  <text x="1045" y="906" text-anchor="middle" class="box-sub">10x MEX � transcript + gene (GTF aggregation)</text>
+
+  <text x="1045" y="944" text-anchor="middle" class="note">Output: {outdir}/oarfish/</text>
+  <text x="1045" y="962" text-anchor="middle" class="note">transcriptome_align � quant � gene_bc_matrix</text>
+
+  <!-- arrows from TAG_BAM to epi2me/isoquant -->
+  <path d="M 429 336 L 429 420 L 235 420 L 235 496" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <path d="M 429 336 L 429 420 L 640 420 L 640 496" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <!-- arrow from QUIK to oarfish (bypass genome) -->
+  <path d="M 1165 254 L 1165 420 L 1045 420 L 1045 496" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-purple)"/>
+  <text x="920" y="408" text-anchor="middle" class="note" fill="#7c3aed">R2 + bc_tags directly (no genome align)</text>
+
+  <!-- internal branch arrows -->
+  <g fill="none" stroke-width="1.5">
+    <line x1="235" y1="598" x2="235" y2="608" stroke="#059669" marker-end="url(#arrow-green)"/>
+    <line x1="235" y1="646" x2="235" y2="656" stroke="#059669" marker-end="url(#arrow-green)"/>
+    <line x1="235" y1="694" x2="235" y2="704" stroke="#059669" marker-end="url(#arrow-green)"/>
+    <line x1="235" y1="742" x2="235" y2="752" stroke="#059669" marker-end="url(#arrow-green)"/>
+    <line x1="235" y1="790" x2="235" y2="800" stroke="#059669" marker-end="url(#arrow-green)"/>
+    <line x1="235" y1="838" x2="235" y2="848" stroke="#059669" marker-end="url(#arrow-green)"/>
+
+    <line x1="640" y1="606" x2="640" y2="616" stroke="#d97706" marker-end="url(#arrow-orange)"/>
+    <line x1="640" y1="662" x2="640" y2="672" stroke="#d97706" marker-end="url(#arrow-orange)"/>
+    <line x1="640" y1="710" x2="640" y2="720" stroke="#d97706" marker-end="url(#arrow-orange)"/>
+    <line x1="640" y1="778" x2="640" y2="788" stroke="#d97706" marker-end="url(#arrow-orange)"/>
+
+    <line x1="1045" y1="606" x2="1045" y2="616" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+    <line x1="1045" y1="662" x2="1045" y2="672" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+    <line x1="1045" y1="710" x2="1045" y2="720" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+    <line x1="1045" y1="758" x2="1045" y2="768" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+    <line x1="1045" y1="806" x2="1045" y2="816" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+    <line x1="1045" y1="862" x2="1045" y2="872" stroke="#7c3aed" marker-end="url(#arrow-purple)"/>
+  </g>
+
+  <!-- REPORTING -->
+  <rect x="40" y="1088" width="1200" height="120" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="60" y="1112" class="section-label">REPORTING (all modes)</text>
+
+  <rect x="200" y="1128" width="200" height="48" rx="6" fill="#fff" stroke="#64748b" filter="url(#shadow)"/>
+  <text x="300" y="1150" text-anchor="middle" class="box-title">MULTIQC</text>
+  <text x="300" y="1164" text-anchor="middle" class="box-sub">{outdir}/{mode}/multiqc/</text>
+
+  <rect x="540" y="1128" width="200" height="48" rx="6" fill="#fff" stroke="#64748b" filter="url(#shadow)"/>
+  <text x="640" y="1150" text-anchor="middle" class="box-title">pipeline_info/</text>
+  <text x="640" y="1164" text-anchor="middle" class="box-sub">versions � trace � params.json</text>
+
+  <rect x="880" y="1128" width="320" height="48" rx="6" fill="#fff" stroke="#64748b" filter="url(#shadow)"/>
+  <text x="1040" y="1150" text-anchor="middle" class="box-title">Shared preprocessing outputs</text>
+  <text x="1040" y="1164" text-anchor="middle" class="box-sub">fastqc � restrander � quik � minimap2 � tag_bam</text>
+
+  <!-- arrows to reporting -->
+  <path d="M 235 1056 L 235 1070 L 300 1070 L 300 1126" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M 640 1056 L 640 1070 L 640 1126" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M 1045 1056 L 1045 1070 L 1040 1070 L 1040 1126" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- LEGEND -->
+  <rect x="40" y="1240" width="1200" height="100" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <text x="60" y="1264" class="section-label">LEGEND</text>
+  <rect x="70" y="1278" width="24" height="16" rx="3" fill="#fff" stroke="#60a5fa" stroke-dasharray="4 3"/>
+  <text x="102" y="1290" class="legend">Optional step</text>
+  <rect x="220" y="1278" width="24" height="16" rx="3" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="252" y="1290" class="legend">Shared preprocessing</text>
+  <rect x="420" y="1278" width="24" height="16" rx="3" fill="#ecfdf5" stroke="#059669"/>
+  <text x="452" y="1290" class="legend">epi2me branch</text>
+  <rect x="580" y="1278" width="24" height="16" rx="3" fill="#fff7ed" stroke="#d97706"/>
+  <text x="612" y="1290" class="legend">isoquant branch</text>
+  <rect x="750" y="1278" width="24" height="16" rx="3" fill="#f5f3ff" stroke="#7c3aed"/>
+  <text x="782" y="1290" class="legend">oarfish branch (skips genome align)</text>
+  <text x="70" y="1318" class="note">Quant outputs published under {outdir}/{gene_quant_mode}/  modes can share one outdir when comparing with -resume.</text>
+
+  <!-- output layout mini diagram -->
+  <rect x="40" y="1368" width="1200" height="280" rx="10" fill="#fff" stroke="#e2e8f0"/>
+  <text x="60" y="1396" class="section-label">OUTPUT LAYOUT</text>
+
+  <text x="80" y="1428" class="box-title" font-family="monospace" font-size="11" fill="#334155">{outdir}/</text>
+  <text x="100" y="1450" class="box-sub" font-family="monospace" font-size="10">   fastqc/ � restrander/ � extract_barcode/ � quik_starsolo/</text>
+  <text x="100" y="1468" class="box-sub" font-family="monospace" font-size="10">   minimap2/ � tag_bam/          � shared (epi2me + isoquant genome path)</text>
+  <text x="100" y="1486" class="box-sub" font-family="monospace" font-size="10">   pipeline_info/                � versions, trace, params.json</text>
+  <text x="100" y="1504" class="box-sub" font-family="monospace" font-size="10" fill="#059669">   epi2me/                       � create_matrix, stringtie, gffcompare, multiqc</text>
+  <text x="100" y="1522" class="box-sub" font-family="monospace" font-size="10" fill="#d97706">   isoquant/                     � umitools_dedup, grouped MTX, isoquant.log, multiqc</text>
+  <text x="100" y="1540" class="box-sub" font-family="monospace" font-size="10" fill="#7c3aed">   oarfish/                      � transcriptome_align, quant, gene+tx MEX, multiqc</text>
+
+  <text x="80" y="1580" class="note">See docs/architecture.md and docs/output.md for module inventory and file-level detail.</text>
+  <text x="80" y="1600" class="note">Generated 2026-06-29 � reflects scnanoseq-style Oarfish path and IsoQuant 3.13 MTX outputs.</text>
+</svg>

@@ -1,0 +1,646 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/starlight/master/nextflow_schema.json",
+    "title": "nf-core/starlight pipeline parameters",
+    "description": "A pipeline to process long read spatial transcriptomics data ",
+    "type": "object",
+    "$defs": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where the pipeline should find input data and save output data.",
+            "required": ["input", "outdir"],
+            "properties": {
+                "input": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_input.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/starlight/usage#samplesheet-input).",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
+                "multiqc_title": {
+                    "type": "string",
+                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature"
+                }
+            }
+        },
+        "chopper_options": {
+            "title": "Chopper read QC options",
+            "type": "object",
+            "fa_icon": "fas fa-cut",
+            "description": "Optional read QC with Chopper before Restrander. Set chopper_enabled to true to filter and trim reads by quality.",
+            "properties": {
+                "chopper_enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable Chopper quality trimming and filtering before Restrander. When false, input reads are passed directly to Restrander.",
+                    "fa_icon": "fas fa-toggle-on"
+                },
+                "chopper_trim_approach": {
+                    "type": "string",
+                    "default": "trim-by-quality",
+                    "enum": ["fixed-crop", "trim-by-quality", "best-read-segment", "split-by-low-quality"],
+                    "description": "Chopper trimming strategy applied to each read.",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "chopper_cutoff": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 0,
+                    "maximum": 40,
+                    "description": "Per-base Phred cutoff for end trimming (requires trim-by-quality, best-read-segment, or split-by-low-quality).",
+                    "fa_icon": "fas fa-star-half-alt"
+                },
+                "chopper_min_quality": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 0,
+                    "maximum": 40,
+                    "description": "Minimum mean read Phred quality; reads below this are discarded (-q).",
+                    "fa_icon": "fas fa-star"
+                },
+                "chopper_minlength": {
+                    "type": "integer",
+                    "default": 100,
+                    "minimum": 1,
+                    "description": "Minimum read length after trimming (--minlength).",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                },
+                "chopper_maxlength": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Maximum read length after trimming (--maxlength). Leave unset for no limit.",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                },
+                "chopper_contaminants": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "description": "Optional reference FASTA for contaminant removal (--contam).",
+                    "fa_icon": "fas fa-file-alt"
+                }
+            }
+        },
+        "barcode_localization_options": {
+            "title": "Barcode localization options",
+            "type": "object",
+            "fa_icon": "fas fa-barcode",
+            "description": "Parameters controlling read orientation with Restrander and Spatial Barcode extraction.",
+            "required": ["restrander_config"],
+            "properties": {
+                "n_reads": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Subsample input reads to this many reads per sample using seqtk sample (random seed 100). Leave unset to skip subsampling.",
+                    "fa_icon": "fas fa-compress-arrows-alt"
+                },
+                "restrander_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "application/json",
+                    "default": "/scratch/gent/vo/000/gvo00027/tools/panoramaseq_ONT/pipeline/assets/restrander/PCB109.json",
+                    "description": "Path to the Restrander JSON configuration file used to orient raw ONT reads.",
+                    "help_text": "Restrander is a mandatory pipeline step. The default config targets PCB109 chemistry (poly-A/T classification followed by TSO/RTP primer detection). Override this path to use a different chemistry configuration.",
+                    "fa_icon": "fas fa-file-code"
+                },
+                "rt_adapter": {
+                    "type": "string",
+                    "default": "CTTGCCTGTCGCTCTATCTTCAGAGGAGAGTCCGCCGCCCGCAAG",
+                    "description": "Constant 45 nt cDNA-RT adapter anchor sequence used as the landmark in parasail alignment.",
+                    "fa_icon": "fas fa-dna"
+                },
+                "barcode_length": {
+                    "type": "integer",
+                    "default": 36,
+                    "minimum": 1,
+                    "description": "Spatial Barcode length in base pairs.",
+                    "fa_icon": "fas fa-ruler"
+                },
+                "barcode_polya_length": {
+                    "type": "integer",
+                    "default": 18,
+                    "minimum": 0,
+                    "description": "Length of the poly-A tail included in the parasail probe sequence.",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                },
+                "barcode_window": {
+                    "type": "integer",
+                    "default": 150,
+                    "minimum": 50,
+                    "description": "Number of bases from the 3' end of each read used as the alignment query.",
+                    "fa_icon": "fas fa-search"
+                },
+                "barcode_gap_open": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Gap-open penalty for the parasail SW alignment.",
+                    "fa_icon": "fas fa-sliders-h",
+                    "hidden": true
+                },
+                "barcode_gap_extend": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Gap-extend penalty for the parasail SW alignment.",
+                    "fa_icon": "fas fa-sliders-h",
+                    "hidden": true
+                },
+                "barcode_max_anchor_ed": {
+                    "type": "integer",
+                    "default": 5,
+                    "minimum": 0,
+                    "description": "Maximum edit distance between the aligned RT-adapter hit and the reference anchor sequence.",
+                    "fa_icon": "fas fa-edit"
+                },
+                "barcode_min_qv": {
+                    "type": "integer",
+                    "default": 15,
+                    "minimum": 0,
+                    "maximum": 40,
+                    "description": "Minimum base quality (Phred) required across all Spatial Barcode bases.",
+                    "fa_icon": "fas fa-star"
+                },
+                "min_barcode_len": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Minimum accepted barcode length. Barcodes shorter than this are dropped. Barcodes between min_barcode_len and barcode_length are right-padded with G's (quality Phred 0). Default: null (strict — must equal barcode_length).",
+                    "fa_icon": "fas fa-ruler"
+                },
+                "adapter_anchor": {
+                    "type": "string",
+                    "default": "TCTGTTGGTGCTGATATTGC",
+                    "description": "20 bp constant adapter anchor immediately 5' of the structured UMI, used for 5' alignment.",
+                    "fa_icon": "fas fa-dna"
+                },
+                "umi_window": {
+                    "type": "integer",
+                    "default": 120,
+                    "minimum": 50,
+                    "description": "Number of bases from the 5' end of each read used as the UMI alignment query.",
+                    "fa_icon": "fas fa-search"
+                },
+                "max_adapter_ed": {
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 0,
+                    "description": "Maximum edit distance for 5' adapter anchor check. Reads exceeding this still get CR/CY but UR/UY are set to empty.",
+                    "fa_icon": "fas fa-edit"
+                },
+                "min_cdna_len": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "description": "Minimum R2 (cDNA) length in bp after splitting. Shorter read pairs are discarded.",
+                    "fa_icon": "fas fa-ruler"
+                },
+                "barcode_whitelist": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to the Spatial Barcode whitelist CSV file (first column = barcode sequence).",
+                    "fa_icon": "fas fa-list"
+                },
+                "strategy": {
+                    "type": "string",
+                    "default": "4_mer_gpu_v4",
+                    "enum": [
+                        "4_7_mer_gpu_v1", "5_7_mer_gpu_v1", "6_7_mer_gpu_v1", "7_7_mer_gpu_v1",
+                        "4_mer_gpu_v2", "5_mer_gpu_v2",
+                        "4_mer_gpu_v3", "5_mer_gpu_v3",
+                        "4_mer_gpu_v4", "5_mer_gpu_v4", "6_mer_gpu_v4", "7_mer_gpu_v4",
+                        "4_mer_gpu_v5", "5_mer_gpu_v5",
+                        "two_step_gpu_v1", "host_v1", "host_v2", "two_step_host_v1"
+                    ],
+                    "description": "QUIK barcode calling strategy. GPU strategies (e.g. 5_mer_gpu_v5) require a GPU; host_v1/host_v2 run on CPU only.",
+                    "fa_icon": "fas fa-project-diagram"
+                },
+                "distance_measure": {
+                    "type": "string",
+                    "default": "SEQUENCE_LEVENSHTEIN",
+                    "enum": ["LEVENSHTEIN", "SEQUENCE_LEVENSHTEIN", "PSEUDO_DISTANCE"],
+                    "description": "QUIK distance metric used for barcode matching.",
+                    "fa_icon": "fas fa-ruler-combined"
+                },
+                "rejection_threshold": {
+                    "type": "integer",
+                    "description": "QUIK rejection threshold. Defaults to barcode_length * 0.25 when not set.",
+                    "fa_icon": "fas fa-ban",
+                    "hidden": true
+                },
+                "enable_columba_rescue": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Extract rejected reads into separate FASTQ files for downstream Columba barcode rescue.",
+                    "fa_icon": "fas fa-life-ring",
+                    "hidden": true
+                }
+            }
+        },
+        "reference_genome_options": {
+            "title": "Reference genome options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Reference genome related files and options required for the workflow.",
+            "properties": {
+                "genome_fasta": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+                    "description": "Path to reference genome FASTA file. Required unless --genome_mmi is provided.",
+                    "fa_icon": "far fa-file-code"
+                },
+                "genome_mmi": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to a prebuilt minimap2 .mmi index. When provided, MINIMAP2_INDEX is skipped.",
+                    "fa_icon": "fas fa-database"
+                },
+                "genome_gtf": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to gene annotation GTF file. Required for StringTie transcriptome assembly when stringtie_enabled is true.",
+                    "fa_icon": "far fa-file-alt"
+                },
+                "junc_bed": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to splice junction BED file for minimap2 --junc-bed. Generate once with: paftools.js gff2bed annotation.gtf > ref_genes.bed",
+                    "fa_icon": "fas fa-stream"
+                },
+                "save_reference": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Publish the generated minimap2 .mmi index to outdir/genome/.",
+                    "fa_icon": "fas fa-save"
+                },
+                "stringtie_enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Assemble a sample transcriptome with StringTie from primary genome alignments, then align cDNA reads to it with minimap2. Only used when gene_quant_mode is epi2me.",
+                    "fa_icon": "fas fa-project-diagram"
+                },
+                "gene_quant_mode": {
+                    "type": "string",
+                    "default": "epi2me",
+                    "enum": ["epi2me", "isoquant", "oarfish"],
+                    "description": "Downstream gene quantification path: epi2me (StringTie + assign_features + create_matrix), isoquant (UMI-tools dedup + IsoQuant on genome BAM), or oarfish (R2 FASTQ → transcriptome align → UMI dedup + Oarfish, scnanoseq-style).",
+                    "fa_icon": "fas fa-code-branch"
+                },
+                "retain_introns": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "IsoQuant: retain intronic reads by setting --gene_quantification all and --transcript_quantification all. When false (default), uses unique_inconsistent (gene) and unique_only (transcript), matching published ONT scRNA pipelines.",
+                    "fa_icon": "fas fa-dna"
+                },
+                "isoquant_args": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Additional IsoQuant CLI flags appended after pipeline defaults (--complete_genedb, sensitive_ont model construction, default_ont splice correction, etc.).",
+                    "fa_icon": "fas fa-terminal"
+                },
+                "isoquant_read_group": {
+                    "type": "string",
+                    "default": "tag:CB",
+                    "description": "IsoQuant --read_group value for per-barcode quantification (e.g. tag:CB).",
+                    "fa_icon": "fas fa-barcode"
+                },
+                "isoquant_use_primary": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Filter to primary alignments (-F 0x904) before UMI-tools dedup in isoquant mode.",
+                    "fa_icon": "fas fa-filter"
+                },
+                "oarfish_args": {
+                    "type": "string",
+                    "default": "--single-cell --model-coverage --filter-group no-filters",
+                    "description": "Oarfish CLI flags for single-cell transcriptome quantification.",
+                    "fa_icon": "fas fa-terminal"
+                },
+                "oarfish_save_transcript_secondary_alignment": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "When true, transcriptome FASTQ alignment uses minimap2 -N 100 (retain secondaries for Oarfish EM). Set false for stricter primary-only alignment.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "umitools_dedup_method": {
+                    "type": "string",
+                    "default": "directional",
+                    "enum": ["unique", "percentile", "cluster", "adjacency", "directional", "directional-adjacency"],
+                    "description": "UMI-tools dedup --method for isoquant and oarfish modes.",
+                    "fa_icon": "fas fa-compress-arrows-alt"
+                },
+                "umitools_dedup_extra_args": {
+                    "type": "string",
+                    "description": "Additional UMI-tools dedup CLI flags appended after defaults in isoquant/oarfish modes.",
+                    "fa_icon": "fas fa-terminal"
+                },
+                "stringtie_mode": {
+                    "type": "string",
+                    "default": "assembly",
+                    "enum": ["assembly", "estimate"],
+                    "description": "StringTie mode: assembly (default, -L) or estimate (-L -e, reference transcripts only).",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "stringtie_opts": {
+                    "type": "string",
+                    "default": "-c 1 -m 50",
+                    "description": "Additional StringTie CLI options appended after -L.",
+                    "fa_icon": "fas fa-terminal"
+                },
+                "strandedness": {
+                    "type": "string",
+                    "default": "unstranded",
+                    "enum": ["unstranded", "forward", "reverse"],
+                    "description": "Library strandedness passed to StringTie (--fr / --rf) and IsoQuant (--stranded forward|reverse|none).",
+                    "fa_icon": "fas fa-arrows-alt-h"
+                },
+                "gene_assign_min_mapq": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "Minimum genomic alignment MAPQ for gene assignment (assign_features).",
+                    "fa_icon": "fas fa-filter"
+                },
+                "gene_assign_min_tr_coverage": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Minimum transcript coverage for multimapping read resolution (assign_features).",
+                    "fa_icon": "fas fa-percentage"
+                },
+                "gene_assign_min_read_coverage": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Minimum read coverage for multimapping read resolution (assign_features).",
+                    "fa_icon": "fas fa-percentage"
+                },
+                "gene_assign_chunksize": {
+                    "type": "integer",
+                    "default": 100000,
+                    "description": "BAM chunk size for assign_features processing.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "matrix_chrom": {
+                    "type": "string",
+                    "default": "all",
+                    "description": "Chromosome label written into barcode tag records for create_matrix.",
+                    "fa_icon": "fas fa-dna"
+                },
+                "matrix_chunk_size": {
+                    "type": "integer",
+                    "default": 200000,
+                    "description": "Approximate row chunk size when reading barcode tags in create_matrix.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "matrix_ref_interval": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Genomic window size (bp) for unassigned reads in create_matrix.",
+                    "fa_icon": "fas fa-ruler-horizontal"
+                },
+                "matrix_umi_length": {
+                    "type": "integer",
+                    "description": "Expected UMI length; discard reads with corrected UMIs of other lengths. Default: no filtering.",
+                    "fa_icon": "fas fa-ruler"
+                },
+                "matrix_skip_umi_clustering": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip UMI clustering in create_matrix and use pre-corrected UB tags.",
+                    "fa_icon": "fas fa-forward"
+                },
+                "genome": {
+                    "type": "string",
+                    "description": "Name of iGenomes reference.",
+                    "fa_icon": "fas fa-book",
+                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                },
+                "fasta": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+                    "description": "Path to FASTA genome file.",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "fa_icon": "far fa-file-code"
+                },
+                "igenomes_ignore": {
+                    "type": "boolean",
+                    "description": "Do not load the iGenomes reference config.",
+                    "fa_icon": "fas fa-ban",
+                    "hidden": true,
+                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
+                },
+                "igenomes_base": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The base path to the igenomes reference files",
+                    "fa_icon": "fas fa-ban",
+                    "hidden": true,
+                    "default": "s3://ngi-igenomes/igenomes/"
+                }
+            }
+        },
+        "institutional_config_options": {
+            "title": "Institutional config options",
+            "type": "object",
+            "fa_icon": "fas fa-university",
+            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
+            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
+            "properties": {
+                "custom_config_version": {
+                    "type": "string",
+                    "description": "Git commit id for Institutional configs.",
+                    "default": "master",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "description": "Base directory for Institutional configs.",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "hidden": true,
+                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_description": {
+                    "type": "string",
+                    "description": "Institutional config description.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Institutional config contact information.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Institutional config URL link.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                }
+            }
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "fa_icon": "fas fa-file-import",
+            "description": "Less common options for the pipeline, typically set in a config file.",
+            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
+            "properties": {
+                "version": {
+                    "type": "boolean",
+                    "description": "Display version and exit.",
+                    "fa_icon": "fas fa-question-circle",
+                    "hidden": true
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "description": "Method used to save pipeline results to output directory.",
+                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
+                    "fa_icon": "fas fa-copy",
+                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+                    "hidden": true
+                },
+                "email_on_fail": {
+                    "type": "string",
+                    "description": "Email address for completion summary, only when pipeline fails.",
+                    "fa_icon": "fas fa-exclamation-triangle",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                    "help_text": "An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.",
+                    "hidden": true
+                },
+                "plaintext_email": {
+                    "type": "boolean",
+                    "description": "Send plain-text email instead of HTML.",
+                    "fa_icon": "fas fa-remove-format",
+                    "hidden": true
+                },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "description": "File size limit when attaching MultiQC reports to summary emails.",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "default": "25.MB",
+                    "fa_icon": "fas fa-file-upload",
+                    "hidden": true
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "description": "Do not use coloured log outputs.",
+                    "fa_icon": "fas fa-palette",
+                    "hidden": true
+                },
+                "hook_url": {
+                    "type": "string",
+                    "description": "Incoming hook URL for messaging service",
+                    "fa_icon": "fas fa-people-group",
+                    "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
+                    "hidden": true
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+                    "fa_icon": "fas fa-cog"
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
+                    "hidden": true
+                },
+                "pipelines_testdata_base_path": {
+                    "type": "string",
+                    "fa_icon": "far fa-check-circle",
+                    "description": "Base URL or local path to location of pipeline test dataset files",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
+                    "hidden": true
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
+                },
+                "help": {
+                    "type": ["boolean", "string"],
+                    "description": "Display the help message."
+                },
+                "help_full": {
+                    "type": "boolean",
+                    "description": "Display the full detailed help message."
+                },
+                "show_hidden": {
+                    "type": "boolean",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                }
+            }
+        }
+    },
+    "allOf": [
+        {
+            "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/chopper_options"
+        },
+        {
+            "$ref": "#/$defs/barcode_localization_options"
+        },
+        {
+            "$ref": "#/$defs/reference_genome_options"
+        },
+        {
+            "$ref": "#/$defs/institutional_config_options"
+        },
+        {
+            "$ref": "#/$defs/generic_options"
+        }
+    ]
+}

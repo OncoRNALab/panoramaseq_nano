@@ -1,0 +1,66 @@
+# macOS and editor metadata
+.DS_Store
+._*
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Python and notebook temporaries
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+
+# Nextflow/runtime outputs
+.nextflow/
+.nextflow.log*
+work/
+results/
+reports/
+timeline.html
+trace.txt
+dag.html
+
+# Requested local/generated folders
+quik_build/
+null/
+
+# Scheduler/job scripts
+*.pbs
+*.sh
+
+# Temporary/intermediate files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.log
+
+# Large bioinformatics data and archives
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.sam
+*.cram
+*.crai
+*.vcf
+*.vcf.gz
+*.bcf
+*.h5
+*.h5ad
+*.mtx
+*.rds
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.gz
+*.bz2
+*.xz

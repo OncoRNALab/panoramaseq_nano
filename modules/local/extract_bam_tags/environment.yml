@@ -1,0 +1,8 @@
+name: extract_bam_tags
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::pysam=0.24.0
+  - conda-forge::pandas=3.0.3
+  - conda-forge::zstandard=0.25.0

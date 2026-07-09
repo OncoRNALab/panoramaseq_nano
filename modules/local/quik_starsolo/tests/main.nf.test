@@ -1,0 +1,53 @@
+nextflow_process {
+
+    name "Test Process QUIK_STARSOLO"
+    script "../main.nf"
+    process "QUIK_STARSOLO"
+    tag "modules"
+    tag "modules_local"
+    tag "quik"
+    tag "quik_starsolo"
+    tag "gpu"
+
+    test("QUIK_STARSOLO - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                outdir = "$outputDir"
+                barcode_start = 9
+                strategy = "4_7_mer_gpu_v1"
+                distance_measure = "SEQUENCE_LEVENSHTEIN"
+            }
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_quik_starsolo' ],
+                    [
+                        file(params.pipelines_testdata_base_path + 'panoramaseq/testdata/rawfastq/S09_UHRR_R1.fastq.gz', checkIfExists: true),
+                        file(params.pipelines_testdata_base_path + 'panoramaseq/testdata/rawfastq/S09_UHRR_R2.fastq.gz', checkIfExists: true)
+                    ]
+                ]
+                input[1] = file(params.pipelines_testdata_base_path + 'panoramaseq/testdata/barcodes_coords.csv', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll (
+                { assert process.success },
+                { assert process.out.r1 != null },
+                { assert process.out.r1.get(0).get(1) ==~ ".*_R1_filtered.fastq.gz" },
+                { assert process.out.r2 != null },
+                { assert process.out.r2.get(0).get(1) ==~ ".*_R2_filtered.fastq.gz" },
+                { assert process.out.whitelist != null },
+                { assert process.out.whitelist.get(0).get(1) ==~ ".*_whitelist.txt" },
+                { assert process.out.stats != null },
+                { assert process.out.stats.get(0).get(1) ==~ ".*_barcode_calling_stats.txt" },
+                { assert process.out.versions != null },
+                { assert snapshot(process.out.versions).match() }
+            )
+        }
+    }
+}

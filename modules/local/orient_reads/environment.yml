@@ -1,0 +1,10 @@
+name: orient_reads
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # orient_reads.py only shells out to seqkit + vsearch (no pysam/biopython).
+  # Omitting pysam avoids heavy conda solver conflicts on some clusters.
+  - python=3.11
+  - vsearch=2.31.1
+  - seqkit=2.13.0

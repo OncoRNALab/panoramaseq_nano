@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""CLI entry point for workflow_glue commands."""
+import os
+import sys
+
+_bin_dir = os.path.dirname(os.path.abspath(__file__))
+if _bin_dir not in sys.path:
+    sys.path.insert(0, _bin_dir)
+
+from workflow_glue import cli  # noqa: E402
+
+if __name__ == "__main__":
+    cli()

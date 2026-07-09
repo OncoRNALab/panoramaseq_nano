@@ -1,0 +1,12 @@
+name: create_matrix
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::umi-tools=1.1.6
+  - conda-forge::editdistance=0.8.1
+  - conda-forge::pandas=3.0.3
+  - conda-forge::numpy=2.4.0
+  - conda-forge::scipy=1.18.0
+  - conda-forge::h5py=3.16.0
+  - conda-forge::zstandard=0.25.0

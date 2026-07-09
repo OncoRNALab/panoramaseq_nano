@@ -1,0 +1,16 @@
+name: assign_features
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::python=3.12
+  - conda-forge::polars=1.42.0
+  - bioconda::pysam=0.24.0
+  - conda-forge::zstandard=0.25.0
+  - conda-forge::pandas=3.0.3
+  - conda-forge::numpy=2.4.0
+  - conda-forge::editdistance=0.8.1
+  - bioconda::umi_tools=1.1.6      
+  - conda-forge::scipy=1.18.0      
+  - conda-forge::h5py=3.16.0
+  - conda-forge::pyarrow=24.0.0   
