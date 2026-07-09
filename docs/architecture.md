@@ -2,7 +2,7 @@
 
 *Last updated: 2026-06-28*
 
-nf-core/starlight is a Nextflow pipeline for **Oxford Nanopore (ONT) spatial / single-cell long-read cDNA** data. It extracts spatial barcodes and UMIs from raw reads, corrects barcodes with QUIK, aligns cDNA to a reference genome, tags BAM records with cell and UMI metadata, and quantifies gene expression using one of three downstream modes selected by `--gene_quant_mode`.
+a Nextflow pipeline for **Oxford Nanopore (ONT) spatial / single-cell long-read cDNA** data. It extracts spatial barcodes and UMIs from raw reads, corrects barcodes with QUIK, aligns cDNA to a reference genome, tags BAM records with cell and UMI metadata, and quantifies gene expression using one of three downstream modes selected by `--gene_quant_mode`.
 
 Entry point: `workflows/starlight.nf`
 
