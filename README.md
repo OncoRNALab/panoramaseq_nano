@@ -21,7 +21,7 @@
 
 See [docs/architecture.md](docs/architecture.md) for the full workflow diagram and parameter reference.
 
-![STARLIGHT pipeline architecture](docs/starlight_architecture.svg)
+![STARLIGHT pipeline architecture](docs/starlight_architecture.pdf)
 
 1. Read QC ([FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Optional quality trimming ([Chopper](https://github.com/wdecoster/chopper))
