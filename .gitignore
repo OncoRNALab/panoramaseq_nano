@@ -24,9 +24,17 @@ timeline.html
 trace.txt
 dag.html
 
-# Requested local/generated folders
+# Local/generated folders
 quik_build/
 null/
+
+# Backup / deprecated copies
+*_old.py
+*_old.config
+*_old.nf
+conf/*_old.config
+bin/*_old*.py
+modules/local/**/main_old.nf
 
 # Scheduler/job scripts
 *.pbs

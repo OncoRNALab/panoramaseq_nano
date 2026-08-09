@@ -288,7 +288,7 @@ See Phase 4 for optional MEX conversion.
 | Step | Container |
 |------|-----------|
 | UMITOOLS_DEDUP | nf-core Wave `umi_tools_future_matplotlib_numpy_pruned` (in module) |
-| ISOQUANT | biocontainers `isoquant:3.12.0` (in module; ≥3.12 required for `--barcoded_bam`) |
+| ISOQUANT | biocontainers `isoquant:3.13.0` (in module; ≥3.12 required for `--barcoded_bam`) |
 | FAIDX / index | `pysam_samtools_python` Wave image |
 
 No new Wave image required unless combining dedup + index in one process.
@@ -470,7 +470,7 @@ read depth) can slow the grouping step after alignment assignment.
 | Option | When to use |
 |--------|-------------|
 | **epi2me** (`gene_quant_mode = 'epi2me'`) | Default; faster at current data scale; produces 10x-style MEX |
-| **Oarfish** (`gene_quant_mode = 'oarfish'`, planned) | UMI long-read quant; may be faster than IsoQuant for ONT sc |
+| **Oarfish** | `gene_quant_mode = 'oarfish'` | R2 FASTQ → txome align → UMI dedup → Oarfish → gene aggregation |
 | **IsoQuant bulk mode** (`--read_group none`) | Debugging only; skips per-barcode grouping |
 
 ### 8. Runtime expectations (after fixes)
