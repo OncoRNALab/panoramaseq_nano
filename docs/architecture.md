@@ -6,9 +6,9 @@ a Nextflow pipeline for **Oxford Nanopore (ONT) spatial / single-cell long-read 
 
 Entry point: `workflows/starlight.nf`
 
-![STARLIGHT pipeline architecture](starlight_architecture.svg)
+![STARLIGHT pipeline architecture](starlight_architecture.png)
 
-*Figure: end-to-end workflow — shared preprocessing (Restrander → QUIK) and the three `--gene_quant_mode` branches. Source: [`starlight_architecture.svg`](starlight_architecture.svg).*
+*Figure: end-to-end workflow — shared preprocessing (Restrander → QUIK) and the three `--gene_quant_mode` branches. [PNG](starlight_architecture.png) · [PDF](starlight_architecture.pdf) · [SVG](starlight_architecture.svg)*
 
 ---
 

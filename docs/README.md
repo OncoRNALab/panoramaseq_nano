@@ -3,7 +3,7 @@
 The nf-core/starlight documentation is split into the following pages:
 
 - [Architecture](architecture.md)
-  - Full pipeline diagram ([SVG](starlight_architecture.svg)), shared preprocessing, and the three quantification modes (epi2me, isoquant, oarfish).
+  - Full pipeline diagram ([PNG](starlight_architecture.png), [PDF](starlight_architecture.pdf), [SVG](starlight_architecture.svg)); shared preprocessing and the three quantification modes (epi2me, isoquant, oarfish).
 - [Pipeline overview](pipeline_overview.md)
   - Colleague-facing step-by-step summary (incl. workflow-glue and mode comparison).
 - [Implementation status](first_implementations.md)

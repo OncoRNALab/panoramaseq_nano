@@ -6,7 +6,7 @@ Nextflow pipeline for **Oxford Nanopore (ONT) spatial / single-cell long-read cD
 
 You choose **one** quantification method per run via `--gene_quant_mode`: **epi2me**, **isoquant**, or **oarfish**.
 
-![STARLIGHT pipeline architecture](starlight_architecture.svg)
+![STARLIGHT pipeline architecture](starlight_architecture.png)
 
 See also [architecture.md](architecture.md) for the detailed mermaid diagram and parameter tables.
 
